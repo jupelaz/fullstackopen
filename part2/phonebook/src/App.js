@@ -1,5 +1,51 @@
 import React, { useState } from 'react'
 
+const Filter = ({ filter, onChange }) => (
+  <div>
+    filter shown with
+    <input value={filter} onChange={onChange} />
+  </div>
+)
+
+const PersonForm = ({
+  newName,
+  handleNameChange,
+  newNumber,
+  handleNumberChange,
+  handleSubmit,
+}) => (
+  <form onSubmit={handleSubmit}>
+    <div>
+      name: <input value={newName} onChange={handleNameChange} />
+    </div>
+    <div>
+      number: <input value={newNumber} onChange={handleNumberChange} />
+    </div>
+    <div>
+      <button type='submit'>add</button>
+    </div>
+  </form>
+)
+
+const Persons = ({ persons, filter }) => {
+  return (
+    <>
+      {persons
+        .filter(person => {
+          const retorno =
+            filter === '' ||
+            person.name.toLowerCase().search(filter.toLowerCase()) !== -1
+          return retorno
+        })
+        .map(person => (
+          <p key={person.name}>
+            {person.name} {person.number}
+          </p>
+        ))}
+    </>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -27,35 +73,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          filter shown with
-          <input value={filter} onChange={handleFilterChange} />
-        </div>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <Filter filter={filter} onChange={handleFilterChange} />
+      <h3>Add a new</h3>
+      <PersonForm
+        handleSubmit={handleSubmit}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
       <h2>Numbers</h2>
-      {persons
-        .filter(person => {
-          const retorno =
-            filter === '' ||
-            person.name.toLowerCase().search(filter.toLowerCase()) !== -1
-          console.log(retorno)
-          return retorno
-        })
-        .map(person => (
-          <p>
-            {person.name} {person.number}
-          </p>
-        ))}
+      <Persons filter={filter} persons={persons} />
     </div>
   )
 }
