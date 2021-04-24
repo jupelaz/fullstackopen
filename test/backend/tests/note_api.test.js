@@ -4,15 +4,22 @@ const app = require('../app')
 const helper = require('./test_helper')
 const api = supertest(app)
 
+const bcrypt = require('bcrypt')
+const User = require('../models/user')
 const Note = require('../models/note')
 beforeEach(async () => {
   await Note.deleteMany({})
+  await User.deleteMany({})
 
-  let noteObject = new Note(helper.initialNotes[0])
-  await noteObject.save()
+  for (let note of helper.initialNotes) {
+    let noteObject = new Note(note)
+    await noteObject.save()
+  }
 
-  noteObject = new Note(helper.initialNotes[1])
-  await noteObject.save()
+  for (let user of helper.initialUsers) {
+    let userObject = new User(user)
+    await userObject.save()
+  }
 })
 
 test('notes are returned as json', async () => {
@@ -95,6 +102,39 @@ test('a note can be deleted', async () => {
   const contents = notesAtEnd.map(r => r.content)
 
   expect(contents).not.toContain(noteToDelete.content)
+})
+
+describe('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'mluukkai',
+      name: 'Matti Luukkainen',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    expect(usernames).toContain(newUser.username)
+  })
 })
 
 afterAll(() => {
