@@ -44,13 +44,27 @@ test('a specific note is within the returned notes', async () => {
 })
 
 test('a valid note can be added ', async () => {
+  const newUser = {
+    notes: [],
+    username: 'root2',
+    name: 'Superuser',
+    password: 'salainen',
+  }
+
+  const responseNewUser = await api.post('/api/users').send(newUser)
+  const { id: newUserId } = responseNewUser.body
+
+  const responseLogin = await api.post('/api/login').send(newUser)
+  const { token } = responseLogin.body
   const newNote = {
     content: 'async/await simplifies making async calls',
     important: true,
+    userId: newUserId,
   }
 
   await api
     .post('/api/notes')
+    .set('Authorization', 'bearer ' + token)
     .send(newNote)
     .expect(200)
     .expect('Content-Type', /application\/json/)
@@ -63,11 +77,26 @@ test('a valid note can be added ', async () => {
 })
 
 test('note without content is not added', async () => {
+  const newUser = {
+    notes: [],
+    username: 'root3',
+    name: 'Superuser',
+    password: 'salainen',
+  }
+
+  await api.post('/api/users').send(newUser)
+
+  const responseLogin = await api.post('/api/login').send(newUser)
+  const { token } = responseLogin.body
   const newNote = {
     important: true,
   }
 
-  await api.post('/api/notes').send(newNote).expect(400)
+  await api
+    .post('/api/notes')
+    .set('Authorization', 'bearer ' + token)
+    .send(newNote)
+    .expect(400)
 
   const response = await helper.notesInDb()
 
