@@ -10,6 +10,10 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const { body, user, token } = request
   const { title, author, url, likes } = body
+  if(!token){
+    return response.status(401).json({ error: 'missing token' })
+  }
+  
   const tokenUser = await User.findById(user)
 
   const blog = new Blog({
