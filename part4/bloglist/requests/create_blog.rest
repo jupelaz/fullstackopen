@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs/
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1Y2FzIiwiaWQiOiI2MDg1N2YwMDg5NjMxYjgwNGQ1MmYxMjEiLCJpYXQiOjE2MTkzNjE2MDMsImV4cCI6MTYxOTM2NTIwM30.muxt9OFpHtantDG-AWN0VNpIg_Sauj92pJIybc9DJaQ
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1Y2FzMiIsImlkIjoiNjA4NWI1MjBhY2ZlOTgxYWRmNjM3OTI3IiwiaWF0IjoxNjE5NjIzMzM1LCJleHAiOjE2MTk2MjY5MzV9.d_hwm5-F0k0dDKneGDuOkh-A4PXjoItawpEYzi43Nu4
 
 {
     "title": "lol2",
