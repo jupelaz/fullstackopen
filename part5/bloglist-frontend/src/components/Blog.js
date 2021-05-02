@@ -1,5 +1,4 @@
 import { useState } from 'react'
-
 const Blog = ({ blog, handleLike, handleDelete, user }) => {
   const blogStyle = {
     paddingTop: 10,
@@ -33,4 +32,6 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
     </div>
   )
 }
+
+Blog.propTypes = {}
 export default Blog
