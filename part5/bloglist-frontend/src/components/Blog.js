@@ -15,20 +15,22 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
     display: user && user.username === blog.user.username ? '' : 'none',
   }
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}{' '}
       <button onClick={toggleVisibility}>{visible ? 'hide' : 'view'}</button>
-      <div style={showWhenVisible}>
-        {blog.url}
-        <br />
-        likes {blog.likes} <button onClick={handleLike}>like</button>
-        <br />
-        {blog.user.name}
-        <br />
-        <button style={removeVisible} onClick={handleDelete}>
-          remove
-        </button>
-      </div>
+      {visible && (
+        <div style={showWhenVisible}>
+          {blog.url}
+          <br />
+          likes {blog.likes} <button onClick={handleLike}>like</button>
+          <br />
+          {blog.user.name}
+          <br />
+          <button style={removeVisible} onClick={handleDelete}>
+            remove
+          </button>
+        </div>
+      )}
     </div>
   )
 }
