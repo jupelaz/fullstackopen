@@ -11,12 +11,12 @@ import loginService from './services/login'
 const App = () => {
   const [notes, setNotes] = useState([])
   //const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(false)
+  const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   //const [loginVisible, setLoginVisible] = useState(false)
 
-  const [username, setUsername] = useState('mluukkai')
-  const [password, setPassword] = useState('mluukkai')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const [user, setUser] = useState(null)
 
@@ -44,7 +44,8 @@ const App = () => {
       .then(returnedNote => {
         setNotes(notes.map(note => (note.id !== id ? note : returnedNote)))
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error)
         setErrorMessage(
           `Note '${note.content}' was already removed from server`
         )
