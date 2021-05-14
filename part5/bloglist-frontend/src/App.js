@@ -14,7 +14,7 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -32,7 +32,7 @@ const App = () => {
         username,
         password,
       })
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
+      window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -76,7 +76,7 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    window.localStorage.removeItem('loggedNoteappUser')
+    window.localStorage.removeItem('loggedBloglistappUser')
     setMessage({ text: `User ${user.username} logged out`, type: 'info' })
     setUser(null)
     setTimeout(() => {
@@ -88,6 +88,7 @@ const App = () => {
       <div>
         username
         <input
+          id='username'
           type='text'
           value={username}
           name='Username'
@@ -97,6 +98,7 @@ const App = () => {
       <div>
         password
         <input
+          id='password'
           type='password'
           value={password}
           name='Password'
@@ -115,7 +117,6 @@ const App = () => {
   }
   const handleDelete = blog => {
     const message = `Remove blog ${blog.title} by ${blog.author}`
-    console.log(message)
     if (window.confirm(message)) {
       blogService.drop(blog)
       setBlogs(blogs.filter(filteredBlog => blog.id !== filteredBlog.id))
@@ -128,6 +129,8 @@ const App = () => {
       <BlogForm createBlog={createBlog} />
     </Togglable>
   )
+
+  console.log(blogs)
 
   return (
     <div>
@@ -146,7 +149,7 @@ const App = () => {
         </div>
       )}
       {blogs
-        .sort((a, b) => a.likes - b.likes)
+        .sort((a, b) => b.likes - a.likes)
         .map(blog => (
           <Blog
             key={blog.id}

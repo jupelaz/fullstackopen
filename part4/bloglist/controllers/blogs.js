@@ -4,6 +4,7 @@ const User = require('../models/user.js')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user')
+  console.log(blogs)
   response.json(blogs)
 })
 
@@ -47,9 +48,12 @@ blogsRouter.delete('/:id', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-  const { params, body } = request
+  const { body, token, params } = request
   const { title, author, url, likes, user } = body
-
+  const { id: userId } = user
+  if (!token) {
+    return response.status(401).json({ error: 'missing token' })
+  }
   const blog = await Blog.findById(params.id)
   if (!blog) {
     return response.status(401).json({ error: 'blog not found' })
@@ -61,9 +65,11 @@ blogsRouter.put('/:id', async (request, response) => {
     author,
     url,
     likes,
-    user,
+    user: userId,
   }
-  await Blog.findByIdAndUpdate(params.id, updatedBlog, { new: true })
+  const newBlog = await Blog.findByIdAndUpdate(params.id, updatedBlog, {
+    new: true,
+  })
   response.status(204).end()
 })
 
