@@ -19,7 +19,7 @@ const asObject = anecdote => {
 
 const initialState = anecdotesAtStart.map(asObject)
 
-const reducer = (state = initialState, action) => {
+const anecdoteReducer = (state = initialState, action) => {
   console.log('state now: ', state)
   console.log('action', action)
   const { type, data } = action
@@ -38,5 +38,5 @@ const reducer = (state = initialState, action) => {
 }
 
 export const addVote = id => ({ type: 'VOTE', data: id })
-export const newNote = content => ({ type: 'CREATE', data: content })
-export default reducer
+export const newAnecdote = content => ({ type: 'CREATE', data: content })
+export default anecdoteReducer

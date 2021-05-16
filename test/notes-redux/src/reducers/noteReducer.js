@@ -1,4 +1,16 @@
-const noteReducer = (state = [], { type, data }) => {
+const initialState = [
+  {
+    content: 'reducer defines how redux store works',
+    important: true,
+    id: 1,
+  },
+  {
+    content: 'state of store can contain any data',
+    important: false,
+    id: 2,
+  },
+]
+const noteReducer = (state = initialState, { type, data }) => {
   const types = {
     NEW_NOTE: _ => [...state, data],
     TOGGLE_IMPORTANCE: _ => {
@@ -12,7 +24,7 @@ const noteReducer = (state = [], { type, data }) => {
     },
     default: _ => state,
   }
-  return types[type]() || types['default']()
+  return (types[type] || types['default'])()
 }
 
 const generateId = () => Number((Math.random() * 1000000).toFixed(0))
