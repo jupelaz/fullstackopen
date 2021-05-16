@@ -31,11 +31,12 @@ const reducer = (state = initialState, action) => {
           : { ...anecdote, votes: anecdote.votes + 1 }
       )
     },
+    CREATE: content => [...state, asObject(content)],
     default: _ => state,
   }
   return (actions[type] || actions['default'])(data)
 }
 
 export const addVote = id => ({ type: 'VOTE', data: id })
-
+export const newNote = content => ({ type: 'CREATE', data: content })
 export default reducer
