@@ -5,11 +5,14 @@ import {
   addNotification,
   deleteNotification,
 } from '../reducers/notificationReducer'
+import anecdoteService from '../services/anecdotes'
 const AnecdoteForm = () => {
   const dispatch = useDispatch()
-  const createAnecdote = event => {
+  const createAnecdote = async event => {
     event.preventDefault()
-    dispatch(newAnecdote(event.target.content.value))
+    const content = event.target.content.value
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch(newAnecdote(newAnecdote))
     dispatch(addNotification(`you added ${event.target.content.value}`))
     setTimeout(() => dispatch(deleteNotification()), 5000)
   }
