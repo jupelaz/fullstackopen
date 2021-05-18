@@ -2,8 +2,12 @@ const notificationReducer = (state = null, action) => {
   console.log('state now: ', state)
   console.log('action', action)
   const { type, data } = action
+
   const actions = {
-    SET_NOTIFICATION: data => data,
+    SET_NOTIFICATION: data => {
+      if (state && state.timeoutId) clearTimeout(state.timeoutId)
+      return data
+    },
     DELETE_NOTIFICATION: _ => null,
     default: _ => state,
   }
@@ -11,16 +15,15 @@ const notificationReducer = (state = null, action) => {
 }
 
 export const setNotification = (text, time) => async dispatch => {
-  dispatch({
-    type: 'SET_NOTIFICATION',
-    data: text,
-  })
-  setTimeout(() => {
+  const timeoutId = setTimeout(() => {
     dispatch({
       type: 'DELETE_NOTIFICATION',
-      data: text,
     })
   }, time * 1000)
+  dispatch({
+    type: 'SET_NOTIFICATION',
+    data: { text, timeoutId },
+  })
 }
 
 export default notificationReducer
