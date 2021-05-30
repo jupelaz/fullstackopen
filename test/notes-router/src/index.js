@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ReactDOM from 'react-dom'
-import { Button, Form, Table } from 'react-bootstrap'
+import { Alert, Button, Form, Nav, Navbar, Table } from 'react-bootstrap'
 import {
   BrowserRouter as Router,
   Switch,
@@ -119,9 +119,14 @@ const App = () => {
   ])
 
   const [user, setUser] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const login = user => {
     setUser(user)
+    setMessage(`welcome ${user}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 10000)
   }
 
   const padding = {
@@ -135,24 +140,38 @@ const App = () => {
 
   return (
     <div className='container'>
-      <div>
-        <Link style={padding} to='/'>
-          home
-        </Link>
-        <Link style={padding} to='/notes'>
-          notes
-        </Link>
-        <Link style={padding} to='/users'>
-          users
-        </Link>
-        {user ? (
-          <em>{user} logged in</em>
-        ) : (
-          <Link style={padding} to='/login'>
-            login
-          </Link>
-        )}
-      </div>
+      {message && <Alert variant='success'>{message}</Alert>}
+      <Navbar collapseOnSelect expand='lg' bg='dark' variant='dark'>
+        <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+        <Navbar.Collapse id='responsive-navbar-nav'>
+          <Nav className='mr-auto'>
+            <Nav.Link href='#' as='span'>
+              <Link style={padding} to='/'>
+                home
+              </Link>
+            </Nav.Link>
+            <Nav.Link href='#' as='span'>
+              <Link style={padding} to='/notes'>
+                notes
+              </Link>
+            </Nav.Link>
+            <Nav.Link href='#' as='span'>
+              <Link style={padding} to='/users'>
+                users
+              </Link>
+            </Nav.Link>
+            <Nav.Link href='#' as='span'>
+              {user ? (
+                <em style={padding}>{user} logged in</em>
+              ) : (
+                <Link style={padding} to='/login'>
+                  login
+                </Link>
+              )}
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
 
       <Switch>
         <Route path='/notes/:id'>
