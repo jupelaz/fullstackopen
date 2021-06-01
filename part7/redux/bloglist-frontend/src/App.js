@@ -1,31 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import { setNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { getBlogs, newBlog, likeBlog, deleteBlog } from './reducers/blogReducer'
+import { setUser } from './reducers/userReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const dispatch = useDispatch()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      dispatch(setUser(user))
     }
   }, [])
+
   useEffect(() => {
-    blogService.getAll().then(blogs => setBlogs(blogs))
-  }, [])
+    dispatch(getBlogs())
+  }, [dispatch])
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -35,8 +34,7 @@ const App = () => {
         password,
       })
       window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
       dispatch(
@@ -50,20 +48,20 @@ const App = () => {
     }
   }
 
-  const createBlog = async ({ title, author, url }) => {
+  const createBlog = ({ title, author, url }) => {
     try {
-      const newBlog = await blogService.create({
+      const createdBlog = {
         title,
         author,
         url,
-      })
+      }
       console.log(newBlog)
-      setBlogs([...blogs, newBlog])
-      blogFormRef.current.toggleVisibility()
+      dispatch(newBlog(createdBlog))
+      //blogFormRef.current.toggleVisibility()
       dispatch(
         setNotification(
           {
-            text: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+            text: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
             type: 'info',
           },
           5
@@ -77,11 +75,9 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistappUser')
+    const username = useSelector(state => state.user && state.user.username)
     dispatch(
-      setNotification(
-        { text: `User ${user.username} logged out`, type: 'info' },
-        5
-      )
+      setNotification({ text: `User ${username} logged out`, type: 'info' }, 5)
     )
   }
   const loginForm = () => (
@@ -111,16 +107,12 @@ const App = () => {
   )
 
   const handleLike = blog => {
-    const newBlog = { ...blog, likes: blog.likes + 1 }
-    blogService.update(newBlog)
-
-    setBlogs(blogs.filter(blog => blog.id !== newBlog.id).concat(newBlog))
+    dispatch(likeBlog(blog))
   }
   const handleDelete = blog => {
     const message = `Remove blog ${blog.title} by ${blog.author}`
     if (window.confirm(message)) {
-      blogService.drop(blog)
-      setBlogs(blogs.filter(filteredBlog => blog.id !== filteredBlog.id))
+      dispatch(deleteBlog(blog))
     }
   }
   const blogFormRef = useRef()
@@ -131,8 +123,12 @@ const App = () => {
     </Togglable>
   )
 
-  console.log(blogs)
-
+  //console.log(blogs)
+  const user = useSelector(state => {
+    console.log(state)
+    return state.user
+  })
+  console.log('user', user)
   return (
     <div>
       <h2>blogs</h2>
@@ -143,15 +139,15 @@ const App = () => {
         <div>
           <br />
           <p>
-            {user.name} logged-in<button onClick={handleLogout}>logout</button>
+            {user.name} logged-in
+            <button onClick={handleLogout}>logout</button>
           </p>
           <br />
           {blogForm()}
         </div>
       )}
-      {blogs
-        .sort((a, b) => b.likes - a.likes)
-        .map(blog => (
+      {useSelector(state => state.blogs.sort((a, b) => b.likes - a.likes)).map(
+        blog => (
           <Blog
             key={blog.id}
             blog={blog}
@@ -159,7 +155,8 @@ const App = () => {
             handleDelete={() => handleDelete(blog)}
             user={user}
           />
-        ))}
+        )
+      )}
     </div>
   )
 }

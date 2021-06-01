@@ -11,7 +11,6 @@ const Blog = ({ blog, handleLike, handleDelete, user }) => {
   const [visible, setVisible] = useState(false)
   const showWhenVisible = { display: visible ? '' : 'none' }
   const toggleVisibility = () => setVisible(!visible)
-  console.log(blog)
   const removeVisible = {
     display: user && user.username === blog.user.username ? '' : 'none',
   }
