@@ -21,4 +21,6 @@ export const setUser = user => async dispatch => {
   })
 }
 
+export const unlogUser = _ => ({ type: 'DELETE_USER' })
+
 export default userReducer
