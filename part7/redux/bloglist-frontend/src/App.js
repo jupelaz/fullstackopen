@@ -7,7 +7,7 @@ import Notification from './components/Notification'
 import { LoginForm } from './components/LoginForm'
 import { LoggedForm } from './components/LoggedForm'
 import { useSelector } from 'react-redux'
-import { BlogView } from './components/BlogView'
+import { Blog } from './components/Blog'
 
 const App = () => {
   return (
@@ -27,7 +27,7 @@ const App = () => {
           <Users />
         </Route>
         <Route path='/blogs/:id'>
-          <BlogView />
+          <Blog />
         </Route>
         <Route path='/'>
           <Home />
