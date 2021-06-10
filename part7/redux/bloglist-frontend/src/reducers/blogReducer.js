@@ -40,6 +40,7 @@ export const getBlogs = _ => {
 export const likeBlog = blog => {
   return async dispatch => {
     const newBlog = { ...blog, likes: blog.likes + 1 }
+    console.log('like blog', newBlog)
     await blogService.update(newBlog)
     dispatch({
       type: 'ADD_A_LIKE',

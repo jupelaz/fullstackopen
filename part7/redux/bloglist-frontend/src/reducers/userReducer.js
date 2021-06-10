@@ -1,4 +1,5 @@
 import blogService from '../services/blogs'
+import usersService from '../services/users'
 
 const userReducer = (state = null, action) => {
   console.log('state now: ', state)
@@ -15,6 +16,7 @@ const userReducer = (state = null, action) => {
 
 export const setUser = user => async dispatch => {
   blogService.setToken(user.token)
+  usersService.setToken(user.token)
   dispatch({
     type: 'SET_USER',
     data: user,

@@ -22,8 +22,21 @@ usersRouter.post('/', async (request, response) => {
 })
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({})
+  const users = await User.find({}).populate('blogs')
   response.json(users)
+})
+
+usersRouter.get('/:id', async (request, response) => {
+  const { token, params } = request
+  const { id } = params
+  if (!token) {
+    return response.status(401).json({ error: 'missing token' })
+  }
+  const user = await User.findById(id).populate('blogs')
+  if (!user) {
+    return response.status(401).json({ error: 'user not found' })
+  }
+  response.json(user)
 })
 
 module.exports = usersRouter
