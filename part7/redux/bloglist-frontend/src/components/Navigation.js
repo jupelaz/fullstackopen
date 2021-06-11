@@ -1,16 +1,13 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import { setNotification } from '../reducers/notificationReducer'
 import { unlogUser } from '../reducers/userReducer'
+import { Box, Link, Button } from '@chakra-ui/react'
 
 export const Navigation = () => {
-  const backGrey = {
-    backgroundColor: 'lightgrey',
-  }
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-  const padding = { padding: 5 }
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBloglistappUser')
     dispatch(unlogUser())
@@ -22,15 +19,15 @@ export const Navigation = () => {
     )
   }
   return (
-    <div style={backGrey}>
-      <Link style={padding} to='/blogs'>
+    <Box>
+      <Link as={RouterLink} color='teal.500' margin='5' to='/blogs'>
         blogs
       </Link>
-      <Link style={padding} to='/users'>
+      <Link as={RouterLink} color='teal.500' margin='5' to='/users'>
         users
       </Link>
       {user && `${user.name} logged-in `}
-      {user && <button onClick={handleLogout}>logout</button>}
-    </div>
+      {user && <Button onClick={handleLogout}>logout</Button>}
+    </Box>
   )
 }
