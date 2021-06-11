@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs/608984fded1af7b04137acf2/comments
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1Y2FzMiIsImlkIjoiNjA4NWI1MjBhY2ZlOTgxYWRmNjM3OTI3IiwiaWF0IjoxNjIzNDE2MDI5LCJleHAiOjE2MjM0MTk2Mjl9._RcA6ynCwouYYYFYbo-Zv4pCFD_cIJWJcedhQf57iKo
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imx1Y2FzMiIsImlkIjoiNjA4NWI1MjBhY2ZlOTgxYWRmNjM3OTI3IiwiaWF0IjoxNjIzNDIyMzk0LCJleHAiOjE2MjM0MjU5OTR9.f4A9SmhmkNnXByVlzTM4VcJrEarlc6bzTwpSZplGAOs
 
 {
     "comment": "manolo es un crack"

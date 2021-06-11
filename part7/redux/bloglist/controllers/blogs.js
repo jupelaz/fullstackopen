@@ -19,11 +19,14 @@ blogsRouter.post('/:id/comments', async (request, response) => {
   if (!blog) {
     return response.status(401).json({ error: 'blog not found' })
   }
-
+  const { title, author, url, likes } = blog
   console.log(comment)
   const comments = blog.comments.concat(comment)
   const updatedBlog = {
-    ...blog,
+    title,
+    author,
+    url,
+    likes,
     comments,
   }
   console.log(updatedBlog)
