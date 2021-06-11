@@ -10,6 +10,7 @@ const blogReducer = (state = [], action) => {
     ADD_A_LIKE: data => state.map(blog => (blog.id === data.id ? data : blog)),
     DELETE_BLOG: data => state.filter(blog => blog.id !== data),
     GET_BLOGS: _ => data,
+    ADD_COMMENT: data => state.map(blog => (blog.id === data.id ? data : blog)),
     default: _ => state,
   }
   return (actions[type] || actions['default'])(data)
@@ -59,4 +60,13 @@ export const deleteBlog = blog => {
   }
 }
 
+export const addComment = blog => {
+  return async dispatch => {
+    await blogService.addComment(blog.id, blog.comment)
+    dispatch({
+      type: 'ADD_COMMENT',
+      data: blog,
+    })
+  }
+}
 export default blogReducer
