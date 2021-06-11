@@ -24,6 +24,16 @@ export const Blog = () => {
         {blog.likes} likes <button onClick={handleLike}>like</button>
       </p>
       <p>added by {blog.author}</p>
+      {blog.comments && (
+        <>
+          <b>comments</b>
+          <ul>
+            {blog.comments.map(comment => (
+              <li>{comment}</li>
+            ))}
+          </ul>
+        </>
+      )}
     </>
   )
 }

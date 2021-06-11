@@ -12,7 +12,7 @@ export const BlogList = () => {
   return useSelector(state =>
     state.blogs.sort((a, b) => b.likes - a.likes)
   ).map(blog => (
-    <div style={blogStyle} className='blog'>
+    <div key={blog.id} style={blogStyle} className='blog'>
       <Link to={`/blogs/${blog.id}`}>
         {blog.title} {blog.author}
       </Link>

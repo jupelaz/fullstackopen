@@ -3,22 +3,19 @@ import { Users } from './components/Users'
 import { User } from './components/User'
 import { Home } from './components/Home'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import Notification from './components/Notification'
+import { Notification } from './components/Notification'
+import { Navigation } from './components/Navigation'
 import { LoginForm } from './components/LoginForm'
-import { LoggedForm } from './components/LoggedForm'
 import { useSelector } from 'react-redux'
 import { Blog } from './components/Blog'
 
 const App = () => {
+  const user = useSelector(state => state.user)
   return (
     <Router>
-      <h2>blogs</h2>
+      <Navigation />
       <Notification />
-      {useSelector(state => state.user) === null ? (
-        <LoginForm />
-      ) : (
-        <LoggedForm />
-      )}
+      {!user && <LoginForm />}
       <Switch>
         <Route path='/users/:id'>
           <User />
@@ -28,6 +25,9 @@ const App = () => {
         </Route>
         <Route path='/blogs/:id'>
           <Blog />
+        </Route>
+        <Route path='/blogs'>
+          <Home />
         </Route>
         <Route path='/'>
           <Home />

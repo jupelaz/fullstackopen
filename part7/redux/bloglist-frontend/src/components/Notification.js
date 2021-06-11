@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-const Notification = () => {
+export const Notification = () => {
   const notification = useSelector(state => state.notification)
   return (
     notification && (
@@ -11,4 +11,3 @@ const Notification = () => {
     )
   )
 }
-export default Notification

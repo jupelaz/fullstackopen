@@ -2,15 +2,40 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog.js')
 const User = require('../models/user.js')
 
-blogsRouter.get('/', async (request, response) => {
+blogsRouter.get('/', async (_, response) => {
   const blogs = await Blog.find({}).populate('user')
   console.log(blogs)
   response.json(blogs)
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const { body, token, params } = request
+  const { comment } = body
+
+  if (!token) {
+    return response.status(401).json({ error: 'missing token' })
+  }
+  const blog = await Blog.findById(params.id)
+  if (!blog) {
+    return response.status(401).json({ error: 'blog not found' })
+  }
+
+  console.log(comment)
+  const comments = blog.comments.concat(comment)
+  const updatedBlog = {
+    ...blog,
+    comments,
+  }
+  console.log(updatedBlog)
+  const newBlog = await Blog.findByIdAndUpdate(params.id, updatedBlog, {
+    new: true,
+  })
+  response.status(204).end()
+})
+
 blogsRouter.post('/', async (request, response) => {
   const { body, user, token } = request
-  const { title, author, url, likes } = body
+  const { title, author, url, likes, comments } = body
   if (!token) {
     return response.status(401).json({ error: 'missing token' })
   }
@@ -23,6 +48,7 @@ blogsRouter.post('/', async (request, response) => {
     url,
     likes,
     user: tokenUser._id,
+    comments,
   })
   const savedBlog = await blog.save()
   tokenUser.blogs = tokenUser.blogs.concat(savedBlog._id)
@@ -49,7 +75,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
   const { body, token, params } = request
-  const { title, author, url, likes, user } = body
+  const { title, author, url, likes, user, comments } = body
   const { id: userId } = user
   if (!token) {
     return response.status(401).json({ error: 'missing token' })
@@ -66,6 +92,7 @@ blogsRouter.put('/:id', async (request, response) => {
     url,
     likes,
     user: userId,
+    comments,
   }
   const newBlog = await Blog.findByIdAndUpdate(params.id, updatedBlog, {
     new: true,
