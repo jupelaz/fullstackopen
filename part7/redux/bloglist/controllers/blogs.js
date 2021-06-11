@@ -30,7 +30,7 @@ blogsRouter.post('/:id/comments', async (request, response) => {
     comments,
   }
   console.log(updatedBlog)
-  const newBlog = await Blog.findByIdAndUpdate(params.id, updatedBlog, {
+  await Blog.findByIdAndUpdate(params.id, updatedBlog, {
     new: true,
   })
   response.status(204).end()

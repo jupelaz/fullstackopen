@@ -10,7 +10,6 @@ export const User = () => {
   useEffect(() => {
     dispatch(getUsers())
   }, [])
-  console.log(user)
   if (!user) return null
   return (
     user && (

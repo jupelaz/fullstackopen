@@ -6,7 +6,7 @@ import { unlogUser } from '../reducers/userReducer'
 
 export const Navigation = () => {
   const backGrey = {
-    'background-color': 'lightgrey',
+    backgroundColor: 'lightgrey',
   }
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)

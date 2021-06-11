@@ -30,11 +30,8 @@ const addComment = async (id, comment) => {
   const config = {
     headers: { Authorization: token },
   }
-  const response = await axios.post(
-    `${baseUrl}/${id}/comments`,
-    { comment },
-    config
-  )
+  const body = { comment }
+  const response = await axios.post(`${baseUrl}/${id}/comments`, body, config)
   return response.data
 }
 const drop = async blog => {

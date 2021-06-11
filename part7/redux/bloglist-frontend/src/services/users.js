@@ -14,7 +14,6 @@ const getAll = async () => {
 }
 
 const getById = async id => {
-  console.log('token', token)
   const config = {
     headers: { Authorization: token },
   }

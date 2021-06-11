@@ -10,7 +10,12 @@ const blogReducer = (state = [], action) => {
     ADD_A_LIKE: data => state.map(blog => (blog.id === data.id ? data : blog)),
     DELETE_BLOG: data => state.filter(blog => blog.id !== data),
     GET_BLOGS: _ => data,
-    ADD_COMMENT: data => state.map(blog => (blog.id === data.id ? data : blog)),
+    ADD_COMMENT: data =>
+      state.map(blog =>
+        blog.id === data.id
+          ? { ...blog, comments: [...blog.comments, data.comment] }
+          : blog
+      ),
     default: _ => state,
   }
   return (actions[type] || actions['default'])(data)
@@ -19,7 +24,6 @@ const blogReducer = (state = [], action) => {
 export const newBlog = blog => {
   return async dispatch => {
     const data = await blogService.create(blog)
-    console.log(data)
     dispatch({
       type: 'NEW_BLOG',
       data: data,
@@ -30,7 +34,6 @@ export const newBlog = blog => {
 export const getBlogs = _ => {
   return async dispatch => {
     const data = await blogService.getAll()
-    console.log('get blogs data', data)
     dispatch({
       type: 'GET_BLOGS',
       data: data,
@@ -41,7 +44,6 @@ export const getBlogs = _ => {
 export const likeBlog = blog => {
   return async dispatch => {
     const newBlog = { ...blog, likes: blog.likes + 1 }
-    console.log('like blog', newBlog)
     await blogService.update(newBlog)
     dispatch({
       type: 'ADD_A_LIKE',
@@ -60,12 +62,12 @@ export const deleteBlog = blog => {
   }
 }
 
-export const addComment = blog => {
+export const addComment = (id, comment) => {
   return async dispatch => {
-    await blogService.addComment(blog.id, blog.comment)
+    await blogService.addComment(id, comment)
     dispatch({
       type: 'ADD_COMMENT',
-      data: blog,
+      data: { id, comment },
     })
   }
 }

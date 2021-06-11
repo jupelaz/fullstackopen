@@ -11,17 +11,14 @@ export const Blog = () => {
   useEffect(() => {
     dispatch(getBlogs())
   }, [])
-  console.log(blog)
   if (!blog) return null
   const handleLike = _ => {
-    console.log('handleLike blog', blog)
     dispatch(likeBlog(blog))
   }
 
   const handleAddComment = event => {
     event.preventDefault()
-    const comments = blog.comments.concat(comment)
-    dispatch(addComment({ ...blog, comments }))
+    dispatch(addComment(blog.id, comment))
     setComment('')
   }
   return (
@@ -45,7 +42,7 @@ export const Blog = () => {
         <>
           <ul>
             {blog.comments.map(comment => (
-              <li>{comment}</li>
+              <li key={comment}>{comment}</li>
             ))}
           </ul>
         </>
