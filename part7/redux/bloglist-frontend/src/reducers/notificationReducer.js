@@ -27,4 +27,8 @@ export const setNotification = (notification, time) => async dispatch => {
   })
 }
 
+export const deleteNotification = () => {
+  return { type: 'DELETE_NOTIFICATION' }
+}
+
 export default notificationReducer

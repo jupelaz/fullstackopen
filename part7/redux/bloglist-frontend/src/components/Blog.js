@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getBlogs, likeBlog, addComment } from '../reducers/blogReducer.js'
 import {
-  Flex,
   Stack,
   Heading,
   Button,

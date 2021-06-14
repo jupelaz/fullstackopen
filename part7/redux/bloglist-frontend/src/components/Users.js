@@ -1,8 +1,17 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import { getUsers } from '../reducers/usersReducer.js'
-
+import {
+  Heading,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Td,
+  Tbody,
+  Link,
+} from '@chakra-ui/react'
 export const Users = () => {
   const dispatch = useDispatch()
   const users = useSelector(state => state.users)
@@ -15,29 +24,31 @@ export const Users = () => {
 
   return (
     <>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Heading>Users</Heading>
+      <Table variant='striped'>
+        <Thead>
+          <Tr>
+            <Th></Th>
+            <Th isNumeric>blogs created</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {users ? (
             users.map(user => (
-              <tr key={user.id}>
-                <td>
-                  <Link to={`users/${user.id}`}>{user.name}</Link>
-                </td>
-                <td>{user.blogs.length}</td>
-              </tr>
+              <Tr key={user.id}>
+                <Td>
+                  <Link as={RouterLink} to={`users/${user.id}`}>
+                    {user.name}
+                  </Link>
+                </Td>
+                <Td isNumeric>{user.blogs.length}</Td>
+              </Tr>
             ))
           ) : (
-            <tr>There are no users</tr>
+            <Tr>There are no users</Tr>
           )}
-        </tbody>
-      </table>
+        </Tbody>
+      </Table>
     </>
   )
 }
