@@ -15,7 +15,7 @@ export const BlogList = () => {
   ).map(blog => (
     <div key={blog.id} style={blogStyle} className='blog'>
       <Link as={RouterLink} color='teal.500' to={`/blogs/${blog.id}`}>
-        {blog.title} {blog.author}
+        {blog.title} by {blog.author}
       </Link>
     </div>
   ))

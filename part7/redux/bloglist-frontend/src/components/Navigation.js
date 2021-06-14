@@ -19,11 +19,11 @@ export const Navigation = () => {
     )
   }
   return (
-    <Box>
-      <Link as={RouterLink} color='teal.500' margin='5' to='/blogs'>
+    <Box bg='lightgray' padding='.5em'>
+      <Link as={RouterLink} color='teal' margin='.5em' to='/blogs'>
         blogs
       </Link>
-      <Link as={RouterLink} color='teal.500' margin='5' to='/users'>
+      <Link as={RouterLink} color='teal' margin='5' to='/users'>
         users
       </Link>
       {user && `${user.name} logged-in `}

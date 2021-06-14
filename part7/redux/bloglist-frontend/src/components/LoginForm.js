@@ -3,6 +3,7 @@ import loginService from '../services/login'
 import { useDispatch } from 'react-redux'
 import { setNotification } from '../reducers/notificationReducer'
 import { setUser } from '../reducers/userReducer'
+import { FormControl, FormLabel, Input, Button } from '@chakra-ui/react'
 
 export const LoginForm = () => {
   const [username, setUsername] = useState('')
@@ -32,27 +33,25 @@ export const LoginForm = () => {
 
   return (
     <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          id='username'
+      <FormControl id='username'>
+        <FormLabel>Username</FormLabel>
+        <Input
           type='text'
           value={username}
-          name='Username'
           onChange={({ target }) => setUsername(target.value)}
         />
-      </div>
-      <div>
-        password
-        <input
-          id='password'
+      </FormControl>
+      <FormControl id='password'>
+        <FormLabel>Password</FormLabel>
+        <Input
           type='password'
           value={password}
-          name='Password'
           onChange={({ target }) => setPassword(target.value)}
         />
-      </div>
-      <button type='submit'>login</button>
+      </FormControl>
+      <Button margin='.5em' type='submit'>
+        login
+      </Button>
     </form>
   )
 }

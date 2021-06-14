@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-
+import {
+  Heading,
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+} from '@chakra-ui/react'
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -14,41 +20,35 @@ const BlogForm = ({ createBlog }) => {
   }
   return (
     <form onSubmit={handleCreate}>
-      <h2>create new</h2>
+      <Heading>Create new blog</Heading>
       <br />
-      <div>
-        title:
-        <input
-          id='title'
+      <FormControl id='title'>
+        <FormLabel>Title</FormLabel>
+        <Input
           type='text'
           value={title}
-          name='Title'
           onChange={({ target }) => setTitle(target.value)}
         />
-      </div>
-      <div>
-        author:
-        <input
-          id='author'
+      </FormControl>
+      <FormControl id='author'>
+        <FormLabel>Author</FormLabel>
+        <Input
           type='text'
           value={author}
-          name='Author'
           onChange={({ target }) => setAuthor(target.value)}
         />
-      </div>
-      <div>
-        url:
-        <input
-          id='url'
+      </FormControl>
+      <FormControl id='url'>
+        <FormLabel>Url</FormLabel>
+        <Input
           type='text'
           value={url}
-          name='Url'
           onChange={({ target }) => setUrl(target.value)}
         />
-      </div>
-      <button id='create' type='submit'>
+      </FormControl>
+      <Button id='create' type='submit' margin='.5em'>
         create
-      </button>
+      </Button>
     </form>
   )
 }

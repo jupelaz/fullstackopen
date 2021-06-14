@@ -2,7 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getBlogs, likeBlog, addComment } from '../reducers/blogReducer.js'
-
+import {
+  Flex,
+  Stack,
+  Heading,
+  Button,
+  InputGroup,
+  Input,
+  InputRightElement,
+  UnorderedList,
+  ListItem,
+  Text,
+  Link,
+} from '@chakra-ui/react'
 export const Blog = () => {
   const [comment, setComment] = useState('')
   const dispatch = useDispatch()
@@ -22,31 +34,40 @@ export const Blog = () => {
     setComment('')
   }
   return (
-    <>
-      <h2>{blog.title}</h2>
-      <b>{blog.url}</b>
-      <p>
-        {blog.likes} likes <button onClick={handleLike}>like</button>
-      </p>
-      <p>added by {blog.author}</p>
-      <b>comments</b>
+    <Stack spacing={4}>
+      <Heading>{blog.title}</Heading>
+      <Link color='teal' to={blog.url}>
+        {blog.url}
+      </Link>
+      <Text>
+        {blog.likes} likes <Button onClick={handleLike}>like</Button>
+      </Text>
+      <Text>added by {blog.author}</Text>
+      <Heading>comments</Heading>
       <form onSubmit={handleAddComment}>
-        <input
-          type='text'
-          value={comment}
-          onChange={({ target }) => setComment(target.value)}
-        />
-        <button>add comment</button>
+        <InputGroup>
+          <Input
+            pr='8rem'
+            type='text'
+            value={comment}
+            onChange={({ target }) => setComment(target.value)}
+          />
+          <InputRightElement w='8rem'>
+            <Button h='1.75rem' size='sm'>
+              add comment
+            </Button>
+          </InputRightElement>
+        </InputGroup>
       </form>
       {blog.comments && (
         <>
-          <ul>
+          <UnorderedList>
             {blog.comments.map(comment => (
-              <li key={comment}>{comment}</li>
+              <ListItem key={comment}>{comment}</ListItem>
             ))}
-          </ul>
+          </UnorderedList>
         </>
       )}
-    </>
+    </Stack>
   )
 }
