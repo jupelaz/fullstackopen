@@ -6,21 +6,21 @@ let persons = [
     phone: '040-123543',
     street: 'Tapiolankatu 5 A',
     city: 'Espoo',
-    id: '3d594650-3436-11e9-bc57-8b80ba54c431',
+    id: '3d594650-3436-11e9-bc57-8b80ba54c431'
   },
   {
     name: 'Matti Luukkainen',
     phone: '040-432342',
     street: 'Malminkaari 10 A',
     city: 'Helsinki',
-    id: '3d599470-3436-11e9-bc57-8b80ba54c431',
+    id: '3d599470-3436-11e9-bc57-8b80ba54c431'
   },
   {
     name: 'Venla Ruuska',
     street: 'Nallemäentie 22 C',
     city: 'Helsinki',
-    id: '3d599471-3436-11e9-bc57-8b80ba54c431',
-  },
+    id: '3d599471-3436-11e9-bc57-8b80ba54c431'
+  }
 ]
 
 const typeDefs = gql`
@@ -56,28 +56,28 @@ const resolvers = {
   Query: {
     personCount: () => persons.length,
     allPersons: () => persons,
-    findPerson: (root, args) => persons.find(p => p.name === args.name),
+    findPerson: (root, args) => persons.find(p => p.name === args.name)
   },
   Mutation: {
     addPerson: (root, args) => {
       const person = { ...args, id: uuid() }
       persons = [...persons, person]
       return person
-    },
+    }
   },
   Person: {
     address: root => {
       return {
         street: root.street,
-        city: root.city,
+        city: root.city
       }
-    },
-  },
+    }
+  }
 }
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers,
+  resolvers
 })
 
 server.listen().then(({ url }) => {
