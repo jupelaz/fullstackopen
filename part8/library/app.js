@@ -3,6 +3,7 @@ const { ApolloServer, gql, UserInputError } = require('apollo-server')
 const mongoose = require('mongoose')
 const Author = require('./models/authors.js')
 const Book = require('./models/books.js')
+const User = require('./models/users.js')
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -113,18 +114,26 @@ const typeDefs = gql`
     genres: [String!]!
     id: ID!
   }
-
   type Author {
     name: String!
     born: Int
     id: ID!
     bookCount: Int!
   }
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+  type Token {
+    value: String!
+  }
   type Query {
     bookCount: Int!
     authorCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
   type Mutation {
     addBook(
@@ -134,19 +143,25 @@ const typeDefs = gql`
       genres: [String!]!
     ): Book!
     editAuthor(name: String!, setBornTo: Int!): Author
+    createUser(username: String!, favoriteGenre: String!): User
+    login(username: String!, password: String!): Token
   }
 `
 
 const resolvers = {
-  // Query: {
-  //   bookCount: () => books.length,
-  //   authorCount: () => authors.length,
-  //   allBooks: (_, args) =>
-  //     books.filter(
-  //       b =>
-  //         (!args.author || b.author === args.author) &&
-  //         (!args.genre || b.genres.some(g => g === args.genre))
-  //     ),
+  Query: {
+    bookCount: async () => await Book.count(),
+    authorCount: async () => await Author.count(),
+    allBooks: async (_, args) => {
+      const { name: genres, author } = args
+      let query
+      if (genres) query.genres = genres
+      if (author) query.author = author
+
+      return await Book.find(query).populate('author')
+    },
+    me: async (_, args) => await User.find({ id: args.id }),
+  },
   //   allAuthors: () =>
   //     authors.map(a => ({
   //       ...a,
@@ -159,7 +174,20 @@ const resolvers = {
   Mutation: {
     addBook: async (_, args) => {
       console.log(args)
-      const author = new Author({ name: args.author })
+      const { author: name } = args
+      const [foundAuthor, ...rest] = await Author.find({ name })
+      console.log('foundAuthor', foundAuthor)
+      const author = foundAuthor || new Author({ name })
+      if (!foundAuthor) {
+        try {
+          await author.save()
+        } catch (error) {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          })
+        }
+      }
+      console.log('author :', author)
       const book = new Book({ ...args, author })
       try {
         await book.save()
@@ -177,16 +205,29 @@ const resolvers = {
       // books = [...books, book]
       // return book
     },
-    // editAuthor: (_, args) => {
-    //   const author = authors.find(a => a.name === args.name)
-    //   if (!author) return null
-    //   console.log('args', args)
-    //   const updatedAuthor = { ...author, born: args.setBornTo }
-    //   console.log('updatedAuthor', updatedAuthor)
-    //   authors = authors.map(a => (a.name === args.name ? updatedAuthor : a))
-    //   console.log('authors', authors)
-    //   return updatedAuthor
-    // },
+    editAuthor: async (_, args) => {
+      console.log('args', args)
+      const author = await Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true }
+      )
+      if (!author) return null
+      author.bookCount = Book.countDocuments({ author: author.id })
+      return author
+    },
+    createUser: async (_, args) => {
+      const { username: name, favoriteGenre } = args
+      const newUser = new User({ name, favoriteGenre })
+      newUser.save()
+      return newUser
+    },
+    login: async (_, args) => {
+      const { username: name, password } = args
+      const foundUser = User.find({ name, password })
+      newUser.save()
+      return newUser
+    },
   },
 }
 
