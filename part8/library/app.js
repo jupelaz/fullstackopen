@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const Author = require('./models/authors.js')
 const Book = require('./models/books.js')
 const User = require('./models/users.js')
+const jwt = require('jsonwebtoken')
 
 mongoose
   .connect(process.env.MONGODB_URI, {
@@ -141,8 +142,9 @@ const typeDefs = gql`
       author: String!
       published: Int!
       genres: [String!]!
+      authorization: String!
     ): Book!
-    editAuthor(name: String!, setBornTo: Int!): Author
+    editAuthor(name: String!, setBornTo: Int!, authorization: String!): Author
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
   }
@@ -174,7 +176,15 @@ const resolvers = {
   Mutation: {
     addBook: async (_, args) => {
       console.log(args)
-      const { author: name } = args
+      const { author: name, authorization } = args
+      if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        const token = authorization.substring(7)
+        if(token){
+          const userFromToken = jwt.verify(token,process.env.JWT_SECRET)
+          if (!(userFromToken && userFromToken.name)) return null
+          
+        }
+      } else return null
       const [foundAuthor, ...rest] = await Author.find({ name })
       console.log('foundAuthor', foundAuthor)
       const author = foundAuthor || new Author({ name })
@@ -207,6 +217,15 @@ const resolvers = {
     },
     editAuthor: async (_, args) => {
       console.log('args', args)
+      if (args.authorization && args.authorization.toLowerCase().startsWith('bearer ')) {
+        const token = args.authorization.substring(7)
+        if(token){
+          const userFromToken = jwt.verify(token,process.env.JWT_SECRET)
+          console.log(userFromToken)
+          if (!(userFromToken && userFromToken.name)) return null
+          
+        }
+      } else return null
       const author = await Author.findOneAndUpdate(
         { name: args.name },
         { born: args.setBornTo },
@@ -223,10 +242,19 @@ const resolvers = {
       return newUser
     },
     login: async (_, args) => {
+      console.log("entra")
       const { username: name, password } = args
-      const foundUser = User.find({ name, password })
-      newUser.save()
-      return newUser
+      console.log(name)
+      console.log(password)
+      await User.find({ name, password })
+      const user = {name,password} 
+      console.log(user)
+      const value = jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn: 60 * 60,
+      })
+      const token = {value}
+      return token
+      
     },
   },
 }
