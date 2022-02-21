@@ -1,0 +1,44 @@
+POST http://localhost:4000
+content-type: application/json
+X-REQUEST-TYPE: GraphQL
+
+query{ 
+  allBooks{ 
+    title 
+    author { 
+      name 
+    } 
+    published 
+    genres 
+  } 
+}
+###
+//me
+POST http://localhost:4000
+content-type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYyMGZiYTRjZGQ3M2RiNGMwYzEyYTBlZiIsInVzZXJuYW1lIjoicGFjbyIsImZhdm9yaXRlR2VucmUiOiJmaWNjaW9uIiwiX192IjowfSwiaWF0IjoxNjQ1NDUzODM1LCJleHAiOjE2NDU0NTc0MzV9.jkL4qZd3KpH1QbxrxqabKaPOIfdipe2TgYv3D1r6a2c
+
+query{ 
+  me{ 
+    username
+    favoriteGenre
+  } 
+}
+###
+//login
+POST http://localhost:4000
+content-type: application/json
+X-REQUEST-TYPE: GraphQL
+Authorization: bearer 
+
+mutation($username:String!,$password:String!){ 
+  login(username:$username,password:$password) {
+    value
+  }
+}
+
+{
+  "username":"paco",
+  "password":"paco"
+}

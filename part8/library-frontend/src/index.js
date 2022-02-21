@@ -12,7 +12,7 @@ import {
 import { setContext } from 'apollo-link-context'
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('phonenumbers-user-token')
+  const token = localStorage.getItem('library-user-token')
   return {
     headers: {
       ...headers,
@@ -21,7 +21,7 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-const httpLink = new HttpLink({ uri: 'http://localhost:4000' })
+const httpLink = new HttpLink({ uri: 'http://localhost:4000/' })
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),

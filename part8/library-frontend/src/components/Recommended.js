@@ -3,16 +3,18 @@ import React, { useState } from 'react'
 const Books = props => {
   const [selectedGenre, setSelectedGenre] = useState('all genres')
   if (!props.show) return null
-  const books = props.books || []
+  const books =
+    props.books?.filter(book => book.genres.includes(user.favoriteGenre)) || []
   const genres = [
     ...new Set(...books.map(book => book.genres && [...book.genres])),
     'all genres'
   ]
+  const user = props.user
 
   return (
     <div>
-      <h2>books</h2>
-
+      <h2>recommendations</h2>
+      <p>books in your favorite genre {user.favoriteGenre}</p>
       <table>
         <tbody>
           <tr>
