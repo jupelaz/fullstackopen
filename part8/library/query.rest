@@ -30,7 +30,7 @@ query{
 POST http://localhost:4000
 content-type: application/json
 X-REQUEST-TYPE: GraphQL
-Authorization: bearer 
+
 
 mutation($username:String!,$password:String!){ 
   login(username:$username,password:$password) {
@@ -42,3 +42,16 @@ mutation($username:String!,$password:String!){
   "username":"paco",
   "password":"paco"
 }
+###
+//allAuthors
+POST http://localhost:4000
+content-type: application/json
+X-REQUEST-TYPE: GraphQL
+
+ query {
+    allAuthors {
+      name
+      born
+      bookCount
+    }
+  }

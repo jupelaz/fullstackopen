@@ -17,6 +17,7 @@ const App = () => {
   const client = useApolloClient()
   const logout = () => {
     setToken(null)
+    setPage('authors')
     localStorage.clear()
     client.resetStore()
   }
