@@ -68,29 +68,26 @@ const resolvers = {
     bookCount: async () => await Book.count(),
     authorCount: async () => await Author.count(),
     allBooks: async (_, args) => {
+      console.log('args', args)
       const { name: genres, author } = args
       let query
       if (genres) query.genres = genres
       if (author) query.author = author
-
+      console.log('All Books Query', query)
       return await Book.find(query).populate('author')
     },
     allAuthors: async () => {
       const books = await Book.find()
-      console.log('books', books)
-      const authors = await Author.find()
-      console.log('authors', authors)
-      const updatedAuthors = authors.map(a => {
-        console.log('author', a)
-        return {
-          name: a.name,
-          born: a.born,
-          id: a._id,
-          bookCount: books.filter(b => b.author === a._id).length
-        }
-      })
-      console.log('updatedAuthors', updatedAuthors)
-      return updatedAuthors
+      return [].concat(
+        (await Author.find()).map(a => {
+          return {
+            id: a._id,
+            name: a.name,
+            born: a.born,
+            bookCount: books.filter(b => b.author === a._id).length
+          }
+        })
+      )
     },
     me: async (_, args, context) => {
       console.log('test')
@@ -158,9 +155,12 @@ const resolvers = {
       return newUser
     },
     login: async (_, args) => {
+      console.log('Login')
       const { username, password } = args
       if (username !== password) return null
+      console.log('user = password')
       const userArray = await User.find({ username })
+      console.log('user found ', userArray)
       if (!userArray.length) return null
       const [user] = userArray
       const value = jwt.sign({ user }, process.env.JWT_SECRET, {
@@ -179,10 +179,14 @@ const server = new ApolloServer({
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const token = auth.substring(7)
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
-      const id = decodedToken.user._id
-      const currentUser = await User.findById(id)
-      return { currentUser }
+      try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        const id = decodedToken.user._id
+        const currentUser = await User.findById(id)
+        return { currentUser }
+      } catch (e) {
+        return null
+      }
     }
   }
 })

@@ -1,20 +1,31 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useLazyQuery } from '@apollo/client'
+import { ALL_BOOKS_RECOM } from '../queries'
+const Books = ({ show, user }) => {
+  const [getBooks, result] = useLazyQuery(ALL_BOOKS_RECOM)
+  const findBooks = (genre) => {
+    getBooks({
+      variables: { genre: genre }
+    })
+  }
+  const [books, setBooks] = useState(null)
+  useEffect(() => {
+    if (user && user.favoriteGenre) {
+      console.log('User in reccomended', user)
+      findBooks(user.favoriteGenre)
+      if (result.data) {
+        setBooks(result.data.AllBooks)
+      }
+    }
+  }, [user])
 
-const Books = props => {
-  const [selectedGenre, setSelectedGenre] = useState('all genres')
-  if (!props.show) return null
-  const books =
-    props.books?.filter(book => book.genres.includes(user.favoriteGenre)) || []
-  const genres = [
-    ...new Set(...books.map(book => book.genres && [...book.genres])),
-    'all genres'
-  ]
-  const user = props.user
+  if (!show) return null
 
+  if (!user?.favoriteGenre) return <div>Loading...</div>
   return (
     <div>
       <h2>recommendations</h2>
-      <p>books in your favorite genre {user.favoriteGenre}</p>
+      <p>books in your favorite genre {user?.favoriteGenre}</p>
       <table>
         <tbody>
           <tr>
@@ -22,29 +33,16 @@ const Books = props => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map(
-            b =>
-              (selectedGenre === 'all genres' ||
-                b.genres.includes(selectedGenre)) && (
-                <tr key={b.title}>
-                  <td>{b.title}</td>
-                  <td>{b.author?.name}</td>
-                  <td>{b.published}</td>
-                </tr>
-              )
-          )}
+          {books &&
+            books.map((b) => (
+              <tr key={b.title}>
+                <td>{b.title}</td>
+                <td>{b.author?.name}</td>
+                <td>{b.published}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
-      {genres.map(genre => (
-        <button
-          key={genre}
-          onClick={event => {
-            setSelectedGenre(event.target.value)
-          }}
-        >
-          {genre}
-        </button>
-      ))}
     </div>
   )
 }

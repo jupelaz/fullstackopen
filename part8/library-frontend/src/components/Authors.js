@@ -6,7 +6,7 @@ const Authors = props => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    refetchQueries: [{ query: ALL_AUTHORS }]
   })
   if (!props.show) return null
   const authors = props.authors || []
@@ -27,7 +27,7 @@ const Authors = props => {
             <th>books</th>
           </tr>
           {authors.map(a => (
-            <tr key={a.name}>
+            <tr key={a.id}>
               <td>{a.name}</td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
@@ -41,7 +41,9 @@ const Authors = props => {
           name
           <select value={name} onChange={({ target }) => setName(target.value)}>
             {authors.map(a => (
-              <option value={a.name}>{a.name}</option>
+              <option key={a.id} value={a.name}>
+                {a.name}
+              </option>
             ))}
           </select>
         </div>

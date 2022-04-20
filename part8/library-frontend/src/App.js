@@ -21,6 +21,10 @@ const App = () => {
     localStorage.clear()
     client.resetStore()
   }
+  console.log('Status')
+  console.log('******')
+  console.log('User', resultUser.data)
+  console.log('token', token)
 
   return (
     <div>
@@ -48,6 +52,7 @@ const App = () => {
       <Recommended user={resultUser?.data?.me} show={page === 'recommended'} />
       <LoginForm
         show={page === 'login'}
+        setPage={setPage}
         setError={setError}
         setToken={setToken}
       />

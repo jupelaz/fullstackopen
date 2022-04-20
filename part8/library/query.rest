@@ -27,10 +27,9 @@ query{
 }
 ###
 //login
-POST http://localhost:4000
+POST http://localhost:4000/graphql
 content-type: application/json
 X-REQUEST-TYPE: GraphQL
-
 
 mutation($username:String!,$password:String!){ 
   login(username:$username,password:$password) {
