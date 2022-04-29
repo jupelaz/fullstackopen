@@ -5,7 +5,8 @@ const Author = require('./models/authors.js')
 const Book = require('./models/books.js')
 const User = require('./models/users.js')
 const jwt = require('jsonwebtoken')
-
+const { PubSub } = require('apollo-server')
+const pubsub = new PubSub()
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -55,11 +56,13 @@ const typeDefs = gql`
       author: String!
       published: Int!
       genres: [String!]!
-      authorization: String!
     ): Book!
-    editAuthor(name: String!, setBornTo: Int!, authorization: String!): Author
+    editAuthor(name: String!, setBornTo: Int!): Author
     createUser(username: String!, favoriteGenre: String!): User
     login(username: String!, password: String!): Token
+  }
+  type Subscription{
+   bookAdded: Book!
   }
 `
 
@@ -68,12 +71,10 @@ const resolvers = {
     bookCount: async () => await Book.count(),
     authorCount: async () => await Author.count(),
     allBooks: async (_, args) => {
-      console.log('args', args)
       const { name: genres, author } = args
       let query
       if (genres) query.genres = genres
       if (author) query.author = author
-      console.log('All Books Query', query)
       return await Book.find(query).populate('author')
     },
     allAuthors: async () => {
@@ -90,24 +91,15 @@ const resolvers = {
       )
     },
     me: async (_, args, context) => {
-      console.log('test')
-      console.log('context', context)
       return await context.currentUser
     }
   },
   Mutation: {
     addBook: async (_, args) => {
-      const { author: name, authorization } = args
-      if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        const token = authorization.substring(7)
-        if (token) {
-          const userFromToken = jwt.verify(token, process.env.JWT_SECRET)
-          if (!(userFromToken && userFromToken.name)) return null
-        }
-      } else return null
-      const findAuthor = await Author.find({ name })
+      console.log(args)
+      const findAuthor = await Author.find({ name:args.author })
       const { foundAuthor } = findAuthor
-      const author = foundAuthor || new Author({ name })
+      const author = foundAuthor || new Author({ name:args.author })
       if (!foundAuthor) {
         try {
           await author.save()
@@ -126,19 +118,10 @@ const resolvers = {
         })
       }
       console.log(book)
+      await pubsub.publish('BOOK_ADDED', { bookAdded: book })
       return book
     },
     editAuthor: async (_, args) => {
-      if (
-        args.authorization &&
-        args.authorization.toLowerCase().startsWith('bearer ')
-      ) {
-        const token = args.authorization.substring(7)
-        if (token) {
-          const userFromToken = jwt.verify(token, process.env.JWT_SECRET)
-          if (!(userFromToken && userFromToken.name)) return null
-        }
-      } else return null
       const author = await Author.findOneAndUpdate(
         { name: args.name },
         { born: args.setBornTo },
@@ -169,13 +152,19 @@ const resolvers = {
       const token = { value }
       return token
     }
-  }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterator(['BOOK_ADDED'])
+    },
+  },
 }
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }) => {
+    console.log('context')
     const auth = req ? req.headers.authorization : null
     if (auth && auth.toLowerCase().startsWith('bearer ')) {
       const token = auth.substring(7)
@@ -191,6 +180,7 @@ const server = new ApolloServer({
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url,subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

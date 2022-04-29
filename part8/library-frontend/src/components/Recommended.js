@@ -11,7 +11,6 @@ const Books = ({ show, user }) => {
   const [books, setBooks] = useState(null)
   useEffect(() => {
     if (user && user.favoriteGenre) {
-      console.log('User in reccomended', user)
       findBooks(user.favoriteGenre)
       if (result.data) {
         setBooks(result.data.AllBooks)

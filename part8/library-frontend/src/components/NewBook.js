@@ -18,8 +18,12 @@ const NewBook = props => {
     event.preventDefault()
 
     console.log('add book...')
-
-    addBook({ variables: { title, published: +published, author, genres } })
+    console.log('title',title)
+    console.log('published',published)
+    console.log('author',author)
+    console.log('genres', genres)
+    const response = await addBook({variables: {title, published: +published, author, genres}})
+    console.log(response)
     setTitle('')
     setPublished('')
     setAuthor('')
