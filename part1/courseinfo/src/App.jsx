@@ -1,4 +1,4 @@
-import Part from './Part'
+import Content from './Content'
 import Header from './Header'
 import Total from './Total'
 const App = () => {
@@ -21,10 +21,8 @@ const App = () => {
   return (
     <div>
       <Header course={course} />
-      <Part part={parts[0].name} exercises={parts[0].exercises} /> 
-      <Part part={parts[1].name} exercises={parts[1].exercises} />
-      <Part part={parts[2].name} exercises={parts[2].exercises} />
-      <Total sum={parts[0].exercises + parts[1].exercises + parts[2].exercises} />
+      <Content parts={parts} />
+      <Total parts={parts} />
     </div>
   )
 }
